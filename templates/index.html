@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>营养小博士 · 儿童膳食指南</title>
+  <style>
+    :root{
+      --bg: #FFF6EA; --card: #FFFFFF; --accent: #FF6B6B; --accent-2: #FF9A00;
+      --line: #FFD580; --bot: #E7F7FF; --user: #FFE7B3; --muted: #777;
+      --purple: #9B5DE5; --pink: #F15BB5; --yellow: #FEE440; --blue: #00BBF9;
+      --green: #00F5D4;
+    }
+    *{ box-sizing:border-box }
+    body{
+      margin:0; 
+      font-family:"Nunito", "Comic Sans MS", "幼圆", "YouYuan", system-ui, -apple-system, Arial;
+      background: radial-gradient(ellipse at 70% -10%, #FFF0D9 0%, var(--bg) 30%, var(--bg) 100%);
+      color:#222;
+      position: relative;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body:before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ccircle cx='40' cy='40' r='4' fill='%23FFD580' opacity='0.2'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: -1;
+    }
+        
+    header{
+      background: linear-gradient(90deg, var(--purple) 0%, var(--pink) 25%, var(--yellow) 50%, var(--green) 75%, var(--blue) 100%);
+      color: #fff; 
+      text-align: center; 
+      padding: 16px 10px; 
+      border-bottom: 5px solid white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    header:after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      right: 0;
+      height: 20px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10'%3E%3Cpath d='M0,0 Q20,10 40,0 Q60,10 80,0 Q100,10 100,10 L100,0 L0,0 Z' fill='white'/%3E%3C/svg%3E") center/cover;
+    }
+    .title{ 
+      font-size: 1.8rem; 
+      font-weight: 900; 
+      letter-spacing: .3px;
+      text-shadow: 2px 2px 0 rgba(155, 93, 229, 0.5);
+      margin: 0;
+    }
+    .subtitle {
+      font-size: 1rem;
+      margin: 4px 0 0;
+      opacity: 0.9;
+    }
+    
+    /* 新增：切换按钮容器样式 */
+    .switcher-container {
+      margin-top: 15px;
+      text-align: left;
+      padding: 0 10px;
+    }
+    
+    /* 新增：切换按钮样式 */
+    .switch-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--purple);
+      text-decoration: none;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      border: 2px solid white;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+    }
+    
+    .switch-btn:hover {
+      background: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+    }
+    
+    main{ 
+      max-width: 980px; 
+      margin: 24px auto; 
+      padding: 16px; 
+    }
+    .grid{ 
+      display: grid; 
+      grid-template-columns: 120px 1fr 120px; 
+      gap: 16px; 
+      align-items: start; 
+    }
+    @media (max-width: 900px){ 
+      .grid{ 
+        grid-template-columns: 1fr; 
+        justify-items: center;
+      } 
+    }
+
+    .card{
+      background: var(--card); 
+      border-radius: 24px; 
+      padding: 20px;
+      border: 3px solid #ffe4b3; 
+      box-shadow: 0 8px 20px rgba(0,0,0,.08);
+      position: relative;
+    }
+    .card:before {
+      content: "";
+      position: absolute;
+      top: -10px; left: -10px; right: -10px; bottom: -10px;
+      border-radius: 30px;
+      background: linear-gradient(135deg, var(--purple), var(--blue), var(--green), var(--yellow), var(--pink));
+      z-index: -1;
+      opacity: 0.3;
+      filter: blur(10px);
+    }
+    
+    .chat-box{
+      height: 60vh; 
+      min-height: 400px; 
+      overflow: auto; 
+      padding: 16px;
+      background: linear-gradient(180deg, #FFF9EF 0%, #FFF 30%);
+      border: 3px dashed var(--line); 
+      border-radius: 20px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 16px;
+    }
+    .msg{ 
+      max-width: 78%; 
+      padding: 14px 18px; 
+      border-radius: 20px; 
+      line-height: 1.6; 
+      position: relative; 
+      word-break: break-word;
+      font-size: 1.05rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      white-space: pre-wrap;
+    }
+    .msg.user{ 
+      background: var(--user); 
+      align-self: flex-end; 
+      border: 3px solid #ffd9a3;
+      border-bottom-right-radius: 6px;
+    }
+    .msg.bot{ 
+      background: var(--bot); 
+      align-self: flex-start; 
+      border: 3px solid #cfefff;
+      border-bottom-left-radius: 6px;
+    }
+    .msg.user:after{ 
+      content: ""; 
+      position: absolute; 
+      right: -12px; 
+      top: 14px; 
+      border: 10px solid transparent; 
+      border-left-color: #ffd9a3; 
+    }
+    .msg.bot:before{ 
+      content: ""; 
+      position: absolute; 
+      left: -12px; 
+      top: 14px; 
+      border: 10px solid transparent; 
+      border-right-color: #cfefff; 
+    }
+    .row{ 
+      display: flex; 
+      gap: 12px; 
+      margin-top: 16px; 
+    }
+    .input{ 
+      flex: 1; 
+      padding: 16px 18px; 
+      font-size: 1.1rem; 
+      border: 3px solid var(--line); 
+      border-radius: 16px; 
+      outline: none; 
+      background: #fffdf8; 
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .input:focus{ 
+      border-color: var(--pink); 
+      box-shadow: 0 0 0 4px rgba(241, 91, 181, 0.2);
+    }
+    .btn{
+      padding: 14px 20px; 
+      font-weight: 800; 
+      font-size: 1.1rem; 
+      color: #5b3600;
+      background: linear-gradient(180deg, #FFD089 0%, #FFB347 100%);
+      border: 3px solid #ffdb9e; 
+      border-radius: 16px; 
+      cursor: pointer;
+      box-shadow: 0 6px 0 #eaa43a; 
+      transition: all 0.1s ease;
+      font-family: inherit;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 0 #eaa43a;
+    }
+    .btn:active{ 
+      transform: translateY(4px); 
+      box-shadow: 0 2px 0 #eaa43a; 
+    }
+    /* 新增：按钮禁用状态样式 */
+    .btn:disabled{
+      background: linear-gradient(180deg, #ffebb7 0%, #ffdca1 100%);
+      border-color: #ffe9c0;
+      color: #8a6630;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 6px 0 #f0c880;
+    }
+    .tiny{ 
+      color: var(--muted); 
+      font-size: .92rem; 
+      margin: 8px 0; 
+      min-height: 1em;
+      text-align: center;
+    }
+    details{ 
+      margin: 8px 0; 
+      border: 1px solid #e0e8ff;
+      border-radius: 8px;
+      background: #fafbff;
+    }
+    summary{ 
+      cursor: pointer; 
+      font-weight: bold;
+      color: var(--purple);
+      padding: 8px 12px;
+      background: #f0f4ff;
+      border-radius: 8px 8px 0 0;
+      transition: background-color 0.2s;
+    }
+    summary:hover {
+      background: #e8f0ff;
+    }
+    details[open] summary {
+      border-bottom: 1px solid #e0e8ff;
+      border-radius: 8px 8px 0 0;
+    }
+    .sources-wrap .item{ 
+      padding: 12px 16px; 
+      margin: 0; 
+      border-radius: 0 0 8px 8px; 
+      background: #fafbff; 
+      border: none;
+    }
+
+    /* 装饰头像（无文案） */
+    .avatar{
+      background: var(--card); 
+      border: 3px solid #ffedc7; 
+      border-radius: 24px; 
+      padding: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,.08); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      position: relative;
+    }
+    .avatar:before {
+      content: "";
+      position: absolute;
+      top: -5px; left: -5px; right: -5px; bottom: -5px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, var(--purple), var(--blue), var(--green), var(--yellow), var(--pink));
+      z-index: -1;
+      opacity: 0.4;
+    }
+    .bear, .bunny{ 
+      width: 100px; 
+      height: 100px;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+    }
+    .wobble{ 
+      animation: wob 3s ease-in-out infinite;
+    }
+    /* 新增：小熊眨眼动画 */
+    @keyframes blink {
+      0%, 90%, 100% { transform: scaleY(1); }
+      95% { transform: scaleY(0.1); }
+    }
+    /* 新增：小兔耳朵抖动 */
+    @keyframes earWiggle {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-5deg); }
+      75% { transform: rotate(5deg); }
+    }
+    @keyframes wob { 
+      0%{ transform: rotate(-2deg) } 
+      50%{ transform: rotate(2deg) } 
+      100%{ transform: rotate(-2deg) } 
+    }
+    
+    /* 浮动元素 */
+    .floating {
+      position: absolute;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .shape1 {
+      top: 15%; left: 5%;
+      width: 40px; height: 40px;
+      background: var(--purple);
+      border-radius: 50%;
+      opacity: 0.4;
+      animation: float 8s ease-in-out infinite;
+    }
+    .shape2 {
+      top: 70%; right: 5%;
+      width: 60px; height: 60px;
+      background: var(--yellow);
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: float 10s ease-in-out infinite 1s;
+    }
+    .shape3 {
+      bottom: 20%; left: 8%;
+      width: 50px; height: 50px;
+      background: var(--green);
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: float 12s ease-in-out infinite 0.5s;
+    }
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(10deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    /* 打字中的省略动画 */
+    .dots:after{ 
+      content: ""; 
+      display: inline-block; 
+      width: 1.2em; 
+      text-align: left; 
+      animation: ellipsis steps(4,end) 1.2s infinite; 
+      overflow: hidden; 
+    }
+    @keyframes ellipsis { 
+      to { width: 4ch } 
+    }
+    
+    /* 可爱标签 */
+    .cute-label {
+      display: inline-block;
+      background: linear-gradient(90deg, var(--purple), var(--pink));
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      margin: 0 4px;
+      vertical-align: middle;
+    }
+    
+    /* 响应式调整 */
+    @media (max-width: 600px) {
+      .title { font-size: 1.5rem; }
+      .subtitle { font-size: 0.9rem; }
+      .msg { max-width: 85%; font-size: 1rem; }
+      .input, .btn { padding: 12px 14px; }
+      .switch-btn {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="floating shape1"></div>
+  <div class="floating shape2"></div>
+  <div class="floating shape3"></div>
+  
+  <header>
+    <div class="title">营养小博士 · 儿童膳食指南</div>
+    <div class="subtitle">和营养小博士一起学会健康饮食，快乐成长每一天！</div>
+    
+    <!-- 新增：切换按钮容器 -->
+    <div class="switcher-container">
+      <nav class="switcher">
+        <a class="switch-btn" href="/teacher/">切换到老师版</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <aside class="avatar">
+        <svg class="bear wobble" viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="62" r="42" fill="#8B5E3C"/>
+          <circle cx="40" cy="30" r="12" fill="#8B5E3C"/>
+          <circle cx="80" cy="30" r="12" fill="#8B5E3C"/>
+          <circle cx="60" cy="72" r="20" fill="#F5D7BF"/>
+          <circle cx="48" cy="58" r="5" fill="#1f1f1f"/>
+          <circle cx="72" cy="58" r="5" fill="#1f1f1f"/>
+          <ellipse cx="60" cy="72" rx="6" ry="4" fill="#8B5E3C"/>
+          <!-- 添加可爱腮红 -->
+          <circle cx="45" cy="70" r="6" fill="#FFB6C1" opacity="0.6"/>
+          <circle cx="75" cy="70" r="6" fill="#FFB6C1" opacity="0.6"/>
+        </svg>
+      </aside>
+
+      <section class="card">
+        <div id="tip" class="tiny"></div>
+        <div id="chat" class="chat-box" role="log" aria-live="polite">
+          <div class="msg bot">你好呀，小朋友！🥕 我是营养小博士<span class="cute-label">健康小助手</span>，想知道什么食物的秘密吗？</div>
+        </div>
+        <div class="row">
+          <input id="q" class="input" type="text" placeholder="问问我食物的营养秘密吧～🍎" aria-label="问题输入框" />
+          <button id="send" class="btn" aria-label="发送问题">发送</button>
+        </div>
+      </section>
+
+      <aside class="avatar">
+        <svg class="bunny wobble" viewBox="0 0 120 120" aria-hidden="true">
+          <ellipse cx="60" cy="70" rx="38" ry="38" fill="#F6CFEA"/>
+          <ellipse cx="42" cy="30" rx="10" ry="20" fill="#F6CFEA"/>
+          <ellipse cx="78" cy="30" rx="10" ry="20" fill="#F6CFEA"/>
+          <circle cx="50" cy="64" r="5" fill="#5b3d57"/>
+          <circle cx="70" cy="64" r="5" fill="#5b3d57"/>
+          <ellipse cx="60" cy="76" rx="6" ry="10" fill="#ff9ec0"/>
+          <!-- 添加可爱腮红 -->
+          <circle cx="45" cy="75" r="6" fill="#FFB6C1" opacity="0.6"/>
+          <circle cx="75" cy="75" r="6" fill="#FFB6C1" opacity="0.6"/>
+          <!-- 添加胡须 -->
+          <line x1="45" y1="80" x2="30" y2="75" stroke="#5b3d57" stroke-width="1.5"/>
+          <line x1="45" y1="85" x2="30" y2="85" stroke="#5b3d57" stroke-width="1.5"/>
+          <line x1="45" y1="90" x2="30" y2="95" stroke="#5b3d57" stroke-width="1.5"/>
+          <line x1="75" y1="80" x2="90" y2="75" stroke="#5b3d57" stroke-width="1.5"/>
+          <line x1="75" y1="85" x2="90" y2="85" stroke="#5b3d57" stroke-width="1.5"/>
+          <line x1="75" y1="90" x2="90" y2="95" stroke="#5b3d57" stroke-width="1.5"/>
+        </svg>
+      </aside>
+    </div>
+  </main>
+
+  <script src="/static/chat-stream.js"></script>
+  <script>
+    const API_BASE = location.pathname.startsWith('/teacher') ? '/teacher' : '/student';
+    const chat = document.getElementById('chat');
+    const qEl = document.getElementById('q');
+    const sendBtn = document.getElementById('send');
+    const tip = document.getElementById('tip');
+
+    function escapeHTML(text) {
+      return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function parseMarkdown(text) {
+      return escapeHTML(text).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\n/g, '<br>');
+    }
+    function addMsg(text, who) {
+      const div = document.createElement('div');
+      div.className = 'msg ' + who;
+      if (who === 'user') div.textContent = text;
+      else div.innerHTML = parseMarkdown(text);
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+      return div;
+    }
+
+    async function checkHealth(){
+      try{
+        const r = await fetch(`${API_BASE}/api/health`);
+        const j = await r.json();
+        tip.textContent = j.status === 'ok' ? '✨ 系统已就绪，开始探索吧！' : (j.load_error || '后端未就绪');
+      }catch(e){
+        tip.textContent = '网络异常，请检查连接';
+      }
+    }
+
+    async function ask() {
+      const text = qEl.value.trim();
+      if (!text || sendBtn.disabled) return;
+      sendBtn.disabled = true;
+      qEl.disabled = true;
+      addMsg(text, 'user');
+      qEl.value = '';
+      const message = addMsg('正在检索资料并思考…', 'bot');
+      const controller = new AbortController();
+      const cancel = () => controller.abort();
+      window.addEventListener('pagehide', cancel, {once: true});
+      let answer = '';
+      try {
+        await window.askNutritionStream(`${API_BASE}/api/ask/stream`, text,
+          token => {
+            answer += token;
+            message.textContent = answer;
+            chat.scrollTop = chat.scrollHeight;
+          },
+          final => { message.innerHTML = parseMarkdown(final); },
+          controller.signal);
+      } catch (error) {
+        if (error.name !== 'AbortError') message.textContent = (answer ? answer + '\n\n' : '') + error.message;
+      } finally {
+        window.removeEventListener('pagehide', cancel);
+        sendBtn.disabled = false;
+        qEl.disabled = false;
+        qEl.focus();
+      }
+    }
+
+    sendBtn.addEventListener('click', ask);
+    qEl.addEventListener('keydown', (e)=>{ 
+      // 关键修改3：阻止Enter键的默认行为（避免页面刷新）
+      if(e.key === 'Enter'){
+        e.preventDefault(); 
+        ask(); 
+      }
+    });
+    
+    // 页面加载完成后执行（移除多余的body.classList.add('loaded')）
+    document.addEventListener('DOMContentLoaded', function() {
+      checkHealth();
+    });
+  </script>
+</body>
+</html>

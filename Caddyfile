@@ -1,0 +1,16 @@
+{$DOMAIN} {
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy same-origin
+	}
+	reverse_proxy app:8080 {
+		# SSE Content-Type triggers immediate flushing automatically.
+		# Overwrite any client-supplied proxy chain; app trusts exactly this hop.
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+		transport http {
+			dial_timeout 10s
+			response_header_timeout 180s
+		}
+	}
+}

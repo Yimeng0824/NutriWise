@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>选择进入 · 生物信息问答</title>
+<style>
+  :root{
+    --bg: #FFF6EA; --card:#FFFFFF; --line:#FFD580;
+    --btn-start:#FFD089; --btn-end:#FFB347; --btn-border:#ffdb9e; --btn-shadow:#eaa43a;
+    --ink:#222; --muted:#666;
+    --grad-1:#9B5DE5; --grad-2:#F15BB5; --grad-3:#FEE440; --grad-4:#00F5D4; --grad-5:#00BBF9;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; color:var(--ink);
+    font-family: "Nunito","PingFang SC","Microsoft YaHei",system-ui,-apple-system,Arial;
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background: radial-gradient(ellipse at 70% -10%, #FFF0D9 0%, var(--bg) 30%, var(--bg) 100%);
+  }
+  .wrap{
+    width: min(980px, 94vw);
+    padding: 24px;
+  }
+  header{
+    position:relative; overflow:hidden;
+    background: linear-gradient(90deg, var(--grad-1), var(--grad-2), var(--grad-3), var(--grad-4), var(--grad-5));
+    color:#fff; border-radius: 20px; padding: 22px 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    border-bottom: 5px solid white;
+  }
+  header h1{
+    margin:0; font-size: 24px; letter-spacing:.5px; text-shadow: 2px 2px rgba(0,0,0,.08);
+  }
+  header p{ margin:.3rem 0 0; opacity:.95 }
+  main{ margin-top: 22px }
+  .grid{
+    display:grid; gap:18px;
+    grid-template-columns: repeat(2,1fr);
+  }
+  @media (max-width: 820px){ .grid{ grid-template-columns:1fr } }
+  .card{
+    position:relative; background:var(--card);
+    border:3px solid var(--line); border-radius:22px; padding:22px;
+    box-shadow: 0 10px 24px rgba(0,0,0,.08);
+  }
+  .card h2{ margin:0 0 6px; font-size:20px }
+  .card p{ margin:6px 0 16px; color:var(--muted); line-height:1.65 }
+  .meta{ font-size:13px; color:#8a6630; background:#fffaf0; border:1px dashed var(--line);
+         padding:8px 10px; border-radius:10px; display:inline-block; margin-bottom:10px }
+  .btn{
+    display:inline-block; padding:12px 16px; font-weight:800; font-size:16px; color:#5b3600;
+    background: linear-gradient(180deg, var(--btn-start) 0%, var(--btn-end) 100%);
+    border: 3px solid var(--btn-border); border-radius:16px; cursor:pointer;
+    box-shadow: 0 6px 0 var(--btn-shadow); text-decoration:none; transition: transform .08s ease, box-shadow .08s ease;
+  }
+  .btn:hover{ transform: translateY(-2px); box-shadow: 0 8px 0 var(--btn-shadow) }
+  .btn:active{ transform: translateY(3px); box-shadow: 0 3px 0 var(--btn-shadow) }
+  .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap }
+  .kbd{ font: 600 12px/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+        border:1px solid #e5e7eb; background:#fff; border-bottom-width:2px; border-radius:6px; padding:4px 6px; color:#444 }
+  footer{ margin-top: 18px; color:#8a8a8a; font-size:13px; text-align:center }
+  .hint{ display:flex; gap:14px; align-items:center; justify-content:center; flex-wrap:wrap }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>请选择入口 · 生物信息问答系统</h1>
+      <p>两个界面、两套检索与生成逻辑：面向学生的友好解释 & 面向教师的专业严谨。</p>
+    </header>
+
+    <main>
+      <div class="grid">
+        <!-- 学生版 -->
+        <section class="card">
+          <span class="meta">适合对象：学生 / 学习者</span>
+          <h2>学生版 · 友好解释</h2>
+          <p>用浅显易懂的语言讲清楚生物信息与营养学知识点，强调比喻、例子与实践小贴士，帮助快速入门与理解。</p>
+          <div class="row">
+            <a class="btn" href="/student/">进入学生版</a>
+          </div>
+        </section>
+
+        <!-- 老师版 -->
+        <section class="card">
+          <span class="meta">适合对象：教师 / 研究与授课</span>
+          <h2>老师版 · 专业严谨</h2>
+          <p>强调基于证据的陈述、数据引用与机理分析，提供可落地的教学/营养指导建议与注意事项。</p>
+          <div class="row">
+            <a class="btn" href="/teacher/">进入老师版</a>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <div class="hint">
+        <div>快捷键：<span class="kbd">S</span> 跳转学生版 · <span class="kbd">T</span> 跳转老师版</div>
+        <div>同域部署，API 已按 <span class="kbd">/student</span> / <span class="kbd">/teacher</span> 前缀区分</div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // 键盘快捷键（S/T）
+    document.addEventListener('keydown', (e) => {
+      const tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+      if (e.key === 's' || e.key === 'S') location.href = '/student/';
+      if (e.key === 't' || e.key === 'T') location.href = '/teacher/';
+    });
+  </script>
+</body>
+</html>
+    

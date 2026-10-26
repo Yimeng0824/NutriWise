@@ -1,0 +1,50 @@
+name: nutrition-book
+services:
+  app:
+    build:
+      context: .
+      args:
+        HF_ENDPOINT: ${HF_DOWNLOAD_ENDPOINT:-https://huggingface.co}
+    image: nutrition-book:cpu
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      EMBEDDING_DEVICE: cpu
+      EMBEDDING_MODEL: /opt/models/bge-large-zh
+      VECTOR_DIR: /app/vector_store
+      RATE_STORAGE_URI: redis://redis:6379/0
+      PROXY_HOPS: "1"
+    depends_on:
+      redis:
+        condition: service_healthy
+    expose: ["8080"]
+    init: true
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: ["ALL"]
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "128mb", "--maxmemory-policy", "noeviction"]
+    restart: unless-stopped
+    volumes: ["redis_data:/data"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN to the public hostname}
+    ports: ["80:80", "443:443", "443:443/udp"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+volumes:
+  redis_data:
+  caddy_data:
+  caddy_config:

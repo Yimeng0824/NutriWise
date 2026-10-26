@@ -1,0 +1,12 @@
+# torch is installed separately from the official CPU-only wheel index.
+torch==2.11.0+cpu
+langchain-community==0.0.10
+langchain-core==0.1.23
+sentence-transformers==5.4.1
+transformers==5.7.0
+huggingface-hub==1.13.0
+faiss-cpu==1.13.2
+numpy==1.26.4
+tokenizers==0.22.2
+# LangChain 0.1.x needs packaging<24; newer build-tool wheel requires packaging>=24.
+wheel==0.45.1
