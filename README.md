@@ -15,6 +15,18 @@ The system was built as an undergraduate thesis project and piloted with an elem
 - **Switchable LLM backend.** DeepSeek (OpenAI-compatible API) or a self-hosted Ollama model, selected with one environment variable.
 - **Abuse and cost controls.** Per-IP quotas shared across roles and endpoints (Redis-backed in production), a global concurrency cap, request-size limits and an integrity check on the index before it is unpickled.
 
+## Screenshots
+
+The interface is in Chinese, matching its audience.
+
+| Landing page | Student mode | Teacher mode |
+| --- | --- | --- |
+| ![Landing page](docs/screenshots/home.png) | ![Student mode](docs/screenshots/student.png) | ![Teacher mode](docs/screenshots/teacher.png) |
+
+| Student answer with inline citations | PMID-linked reference list |
+| --- | --- |
+| ![Student answer](docs/screenshots/answer-student.png) | ![References](docs/screenshots/answer-references.png) |
+
 ## Architecture
 
 ```mermaid
